@@ -75,3 +75,8 @@ def test_show_summary():
 
     response = client.get("/book/Fall Classic/Simply Lift")
     assert response.status_code == 302
+
+
+def points():
+    response = client.get("/points")
+    assert response.status_code == 200
