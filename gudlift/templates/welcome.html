@@ -16,7 +16,8 @@
        </ul>
     {% endif%}
     Points available: {{club['points']}}
-    <h3>Competitions:</h3>
+    <h3>Upcoming competitions:</h3>
+    {% if competitions %}
     <ul>
         {% for comp in competitions%}
         <li>
@@ -30,6 +31,25 @@
         <hr />
         {% endfor %}
     </ul>
+    {% else %}
+    <p>No upcoming competitions available.</p>
+    {% endif %}
+    <h3>Past competitions:</h3>
+    {% if past_competitions %}
+    <ul>
+        
+        {% for comp in past_competitions%}
+        <li>
+            {{comp['name']}}<br />
+            Date: {{comp['date']}}</br>
+            Number of Places: {{comp['numberOfPlaces']}}
+        </li>
+        <hr />
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No past competitions available.</p>
+    {% endif %}
     {%endwith%}
 
 </body>

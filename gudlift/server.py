@@ -1,4 +1,6 @@
 import json
+from datetime import datetime
+
 from flask import Flask,render_template,request,redirect,flash,url_for, session
 
 
@@ -10,8 +12,10 @@ def loadClubs():
 
 def loadCompetitions():
     with open('gudlift/competitions.json') as comps:
-         listOfCompetitions = json.load(comps)['competitions']
-         return listOfCompetitions
+        list_of_competitions = json.load(comps)['competitions']
+        for competition in list_of_competitions:
+            competition['date'] = datetime.fromisoformat(competition['date'])
+        return list_of_competitions
 
 
 app = Flask(__name__)
@@ -42,22 +46,28 @@ def index():
 @app.route('/showSummary')
 def showSummary():
     club = [club for club in clubs if club['email'] == session["user_id"]]
+    upcoming_competitions = [competition for competition in competitions
+                             if competition['date'] >= datetime.now()]
+    past_competitions = [competition for competition in competitions
+                         if competition['date'] < datetime.now()]
     if club:
         return render_template('welcome.html', club=club[0],
-                               competitions=competitions)
+                               competitions=upcoming_competitions,
+                               past_competitions=past_competitions)
     else:
         return redirect(url_for('index'))
 
 
 @app.route('/book/<competition>/<club>')
-def book(competition,club):
+def book(competition, club):
     foundClub = [c for c in clubs if c['name'] == club][0]
     foundCompetition = [c for c in competitions if c['name'] == competition][0]
-    if foundClub and foundCompetition:
-        return render_template('booking.html',club=foundClub,competition=foundCompetition)
+    if foundClub and foundCompetition and \
+            foundCompetition['date'] >= datetime.now():
+        return render_template('booking.html', club=foundClub, competition=foundCompetition)
     else:
         flash("Something went wrong-please try again")
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return redirect(url_for('showSummary'))
 
 
 @app.route('/purchasePlaces', methods=['POST'])
@@ -94,7 +104,7 @@ def purchasePlaces():
         club['competitions'][competition['name']] = placesRequired + already_booked_places
         flash('Great-booking complete!')
         return render_template('welcome.html', club=club, competitions=competitions)
-    
+
     for message in error:
         flash(message)
 

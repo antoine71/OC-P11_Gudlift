@@ -68,3 +68,10 @@ def test_purchase_places():
     assert int(club_['points']) == current_points
     assert int(competition_['numberOfPlaces']) == current_places
 
+
+def test_show_summary():
+    response = client.get("/book/Spring Festival/Simply Lift")
+    assert response.status_code == 200
+
+    response = client.get("/book/Fall Classic/Simply Lift")
+    assert response.status_code == 302
