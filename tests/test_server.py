@@ -1,4 +1,4 @@
-from gudlift.server import app
+from gudlift.server import app, clubs
 
 client = app.test_client()
 
@@ -17,3 +17,36 @@ def test_index():
 
     response = client.post("/", data={'email': no_email})
     assert "Email is required." in str(response.data)
+
+
+def test_purchase_places():
+    club = 'Iron Temple'
+    competition = 'Spring Festival'
+    club_ = [club_ for club_ in clubs if club_['name'] == club][0]
+    current_points = int(club_['points'])
+
+    required_places = 3
+    response = client.post("/purchasePlaces", data={
+        'club': club,
+        'competition': competition,
+        'places': required_places})
+    assert "Great-booking complete!" in str(response.data)
+    current_points -= required_places
+    assert int(club_['points']) == current_points
+
+    required_places = 6
+    response = client.post("/purchasePlaces", data={
+        'club': club,
+        'competition': competition,
+        'places': required_places})
+    assert 'Warning: you have only' in str(response.data)
+    assert int(club_['points']) == current_points
+
+    required_places = 1
+    response = client.post("/purchasePlaces", data={
+        'club': club,
+        'competition': competition,
+        'places': required_places})
+    assert "Great-booking complete!" in str(response.data)
+    current_points -= required_places
+    assert int(club_['points']) == current_points
