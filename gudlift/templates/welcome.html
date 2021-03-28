@@ -1,57 +1,58 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Summary | GUDLFT Registration</title>
-</head>
-<body>
-        <h2>Welcome, {{club['email']}} </h2><a href="{{url_for('logout')}}">Logout</a>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Summary | GUDLFT Registration</title>
+    </head>
+    <body>
+        <h2>Welcome, {{club['email']}} </h2>
+        <p><a href="{{url_for('logout')}}">Logout</a></p>
 
-    {% with messages = get_flashed_messages()%}
-    {% if messages %}
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
         <ul>
-       {% for message in messages %}
-            <li>{{message}}</li>
+        {% for message in messages %}
+            <li>{{ message }}</li>
         {% endfor %}
-       </ul>
-    {% endif%}
-    <p>Points available: {{club['points']}}</p>
-    <p>Consulter la <a href="{{ url_for('points') }}">liste des clubs</a>.</p>
-    <h3>Upcoming competitions:</h3>
-    {% if competitions %}
-    <ul>
-        {% for comp in competitions%}
-        <li>
-            {{comp['name']}}<br />
-            Date: {{comp['date']}}</br>
-            Number of Places: {{comp['numberOfPlaces']}}
-            {%if comp['numberOfPlaces']|int >0%}
-            <a href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
-            {%endif%}
-        </li>
-        <hr />
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p>No upcoming competitions available.</p>
-    {% endif %}
-    <h3>Past competitions:</h3>
-    {% if past_competitions %}
-    <ul>
-        
-        {% for comp in past_competitions%}
-        <li>
-            {{comp['name']}}<br />
-            Date: {{comp['date']}}</br>
-            Number of Places: {{comp['numberOfPlaces']}}
-        </li>
-        <hr />
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p>No past competitions available.</p>
-    {% endif %}
-    {%endwith%}
+        </ul>
+        {% endif %}
+        {%endwith%}
+        <p>Points available: {{club['points']}}</p>
+        <p>Check the <a href="{{ url_for('points') }}">list of clubs</a>.</p>
+        <h3>Upcoming competitions:</h3>
+        {% if competitions %}
+        <ul>
+            {% for comp in competitions%}
+            <li>
+                {{ comp['name'] }}<br />
+                Date: {{ comp['date'] }}</br>
+                Number of Places: {{ comp['numberOfPlaces'] }}
+                {% if comp['numberOfPlaces']|int >0 %}
+                <a href="{{ url_for('book',competition=comp['name'],club=club['name'])|urlencode }}">Book Places</a>
+                {% endif %}
+            </li>
+            <hr />
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No upcoming competitions available.</p>
+        {% endif %}
+        <h3>Past competitions:</h3>
+        {% if past_competitions %}
+        <ul>   
+            {% for comp in past_competitions %}
+            <li>
+                {{ comp['name'] }}<br />
+                Date: {{ comp['date'] }}</br>
+                Number of Places: {{ comp['numberOfPlaces'] }}
+            </li>
+            <hr />
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No past competitions available.</p>
+        {% endif %}
+       
 
-</body>
+    </body>
 </html>

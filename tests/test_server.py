@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 from gudlift.server import app, clubs, competitions
 
 client = app.test_client()
@@ -29,40 +31,32 @@ def test_purchase_places():
     current_places = int(competition_['numberOfPlaces'])
 
     required_places = 13
-    response = client.post("/purchasePlaces", data={
-        'club': club,
-        'competition': competition,
+    response = client.post(quote("/book/Spring Festival/Simply Lift"), data={
         'places': required_places})
     assert "Warning: too much places booked." in str(response.data)
     assert int(club_['points']) == current_points
     assert int(competition_['numberOfPlaces']) == current_places
 
     required_places = 3
-    response = client.post("/purchasePlaces", data={
-        'club': club,
-        'competition': competition,
+    response = client.post(quote("/book/" + competition + "/" + club), data={
         'places': required_places})
-    assert "Great-booking complete!" in str(response.data)
+    assert response.status_code == 302
     current_points -= required_places
     current_places -= required_places
     assert int(club_['points']) == current_points
     assert int(competition_['numberOfPlaces']) == current_places
 
     required_places = 11
-    response = client.post("/purchasePlaces", data={
-        'club': club,
-        'competition': competition,
+    response = client.post(quote("/book/" + competition + "/" + club), data={
         'places': required_places})
     assert 'Warning: not enough points.' in str(response.data)
     assert int(club_['points']) == current_points
     assert int(competition_['numberOfPlaces']) == current_places
 
     required_places = 1
-    response = client.post("/purchasePlaces", data={
-        'club': club,
-        'competition': competition,
+    response = client.post(quote("/book/" + competition + "/" + club), data={
         'places': required_places})
-    assert "Great-booking complete!" in str(response.data)
+    assert response.status_code == 302
     current_points -= required_places
     current_places -= required_places
     assert int(club_['points']) == current_points
@@ -70,10 +64,10 @@ def test_purchase_places():
 
 
 def test_show_summary():
-    response = client.get("/book/Spring Festival/Simply Lift")
+    response = client.get(quote("/book/Spring Festival/Simply Lift"))
     assert response.status_code == 200
 
-    response = client.get("/book/Fall Classic/Simply Lift")
+    response = client.get(quote("/book/Fall Classic/Simply Lift"))
     assert response.status_code == 302
 
 
