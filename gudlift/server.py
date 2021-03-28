@@ -1,5 +1,5 @@
 import json
-from flask import Flask,render_template,request,redirect,flash,url_for
+from flask import Flask,render_template,request,redirect,flash,url_for, session
 
 
 def loadClubs():
@@ -20,14 +20,28 @@ app.secret_key = 'something_special'
 competitions = loadCompetitions()
 clubs = loadClubs()
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
+    if request.method == "POST":
+        email = request.form["email"]
+        error = None
+        if not email:
+            error = "Email is required."
+        elif not [club for club in clubs if club['email'] == request.form['email']]:
+            error = "The email {0} is not registered.".format(email)
+
+        if error is None:
+            session.clear()
+            session["user_id"] = email
+            return redirect(url_for('showSummary'))
+
+        flash(error)
+
     return render_template('index.html')
 
-
-@app.route('/showSummary', methods=['POST'])
+@app.route('/showSummary')
 def showSummary():
-    club = [club for club in clubs if club['email'] == request.form['email']]
+    club = [club for club in clubs if club['email'] == session["user_id"]]
     if club:
         return render_template('welcome.html', club=club[0],
                                competitions=competitions)
