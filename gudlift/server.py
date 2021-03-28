@@ -66,20 +66,37 @@ def purchasePlaces():
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     placesRequired = int(request.form['places'])
     points = int(club['points'])
-    error = None
+    max_number_of_places = 12
+    try:
+        already_booked_places = int(club['competitions'][competition['name']])
+    except KeyError:
+        already_booked_places = 0
+    error = []
 
-    if points < placesRequired:
-        error = 'Warning: you have only {0} available points, you can not book \
-            more than {0} places.'.format(points)
+    if placesRequired > points:
+        error.append('Warning: not enough points. You have only {0} available \
+            points, you can not book more than {0} places.'.format(points))
 
-    if error is None:
+    if placesRequired > max_number_of_places - already_booked_places:
+        error.append('Warning: too much places booked. You can not book more \
+                     than{0} places per competition (places previously \
+                     booked: {1}).'
+                     .format(max_number_of_places, already_booked_places))
+
+    if not error:
         competition['numberOfPlaces'] = \
             int(competition['numberOfPlaces']) - placesRequired
         club['points'] = int(club['points']) - placesRequired
+        try:
+            club['competitions']
+        except KeyError:
+            club['competitions'] = {}
+        club['competitions'][competition['name']] = placesRequired + already_booked_places
         flash('Great-booking complete!')
         return render_template('welcome.html', club=club, competitions=competitions)
-
-    flash(error)
+    
+    for message in error:
+        flash(message)
 
     return render_template('booking.html', club=club, competition=competition)
 

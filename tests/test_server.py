@@ -1,4 +1,4 @@
-from gudlift.server import app, clubs
+from gudlift.server import app, clubs, competitions
 
 client = app.test_client()
 
@@ -20,10 +20,22 @@ def test_index():
 
 
 def test_purchase_places():
-    club = 'Iron Temple'
+    club = 'Simply Lift'
     competition = 'Spring Festival'
     club_ = [club_ for club_ in clubs if club_['name'] == club][0]
+    competition_ = [competition_ for competition_ in competitions
+                    if competition_['name'] == competition][0]
     current_points = int(club_['points'])
+    current_places = int(competition_['numberOfPlaces'])
+
+    required_places = 13
+    response = client.post("/purchasePlaces", data={
+        'club': club,
+        'competition': competition,
+        'places': required_places})
+    assert "Warning: too much places booked." in str(response.data)
+    assert int(club_['points']) == current_points
+    assert int(competition_['numberOfPlaces']) == current_places
 
     required_places = 3
     response = client.post("/purchasePlaces", data={
@@ -32,15 +44,18 @@ def test_purchase_places():
         'places': required_places})
     assert "Great-booking complete!" in str(response.data)
     current_points -= required_places
+    current_places -= required_places
     assert int(club_['points']) == current_points
+    assert int(competition_['numberOfPlaces']) == current_places
 
-    required_places = 6
+    required_places = 11
     response = client.post("/purchasePlaces", data={
         'club': club,
         'competition': competition,
         'places': required_places})
-    assert 'Warning: you have only' in str(response.data)
+    assert 'Warning: not enough points.' in str(response.data)
     assert int(club_['points']) == current_points
+    assert int(competition_['numberOfPlaces']) == current_places
 
     required_places = 1
     response = client.post("/purchasePlaces", data={
@@ -49,4 +64,7 @@ def test_purchase_places():
         'places': required_places})
     assert "Great-booking complete!" in str(response.data)
     current_points -= required_places
+    current_places -= required_places
     assert int(club_['points']) == current_points
+    assert int(competition_['numberOfPlaces']) == current_places
+
