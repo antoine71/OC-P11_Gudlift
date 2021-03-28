@@ -3,6 +3,7 @@ from datetime import datetime
 
 from flask import Flask,render_template,request,redirect,flash,url_for, session
 
+from .auth import login_required
 
 def loadClubs():
     with open('gudlift/clubs.json') as c:
@@ -44,6 +45,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/showSummary')
+@login_required
 def showSummary():
     club = [club for club in clubs if club['email'] == session["user_id"]]
     upcoming_competitions = [competition for competition in competitions
@@ -59,6 +61,7 @@ def showSummary():
 
 
 @app.route('/book/<competition>/<club>')
+@login_required
 def book(competition, club):
     foundClub = [c for c in clubs if c['name'] == club][0]
     foundCompetition = [c for c in competitions if c['name'] == competition][0]
@@ -71,6 +74,7 @@ def book(competition, club):
 
 
 @app.route('/purchasePlaces', methods=['POST'])
+@login_required
 def purchasePlaces():
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
     club = [c for c in clubs if c['name'] == request.form['club']][0]
