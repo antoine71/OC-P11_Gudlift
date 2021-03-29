@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-from urllib.parse import quote, unquote
+from urllib.parse import unquote
 
 from flask import Flask
 from flask import render_template
@@ -9,6 +9,7 @@ from flask import redirect
 from flask import flash
 from flask import session
 from flask import url_for
+from flask import abort
 from .auth import login_required
 
 
@@ -40,7 +41,8 @@ def index():
         error = None
         if not email:
             error = "Email is required."
-        elif not [club for club in clubs if club['email'] == request.form['email']]:
+        elif not [club for club in clubs if club['email'] ==
+                  request.form['email']]:
             error = "The email {0} is not registered.".format(email)
 
         if error is None:
@@ -78,49 +80,51 @@ def book(competition, club):
         club = [c for c in clubs if c['name'] == club][0]
         competition = [c for c in competitions if c['name'] == competition][0]
     except IndexError:
-        flash("Something went wrong-please try again")        
-        return redirect(url_for('show_summary'))
+        abort(404)
     if club and competition and \
             competition['date'] >= datetime.now():
-        if request.method == 'GET':
-            return render_template('booking.html', club=club, competition=competition)
 
-        elif request.method == 'POST':
+        if request.method == 'POST':
             placesRequired = int(request.form['places'])
             points = int(club['points'])
             max_number_of_places = 12
             try:
-                already_booked_places = int(club['competitions'][competition['name']])
+                already_booked_places = \
+                    int(club['competitions'][competition['name']])
             except KeyError:
                 already_booked_places = 0
             error = []
 
             if placesRequired > points:
-                error.append('Warning: not enough points. You have only {0} available \
-                    points, you can not book more than {0} places.'.format(points))
+                error.append('Warning: not enough points. You have only {0} \
+                             available points, you can not book more than {0} \
+                             places.'.format(points))
 
             if placesRequired > max_number_of_places - already_booked_places:
-                error.append('Warning: too much places booked. You can not book more \
-                            than{0} places per competition (places previously \
-                            booked: {1}).'
-                            .format(max_number_of_places, already_booked_places))
+                error.append('Warning: too much places booked. You can not \
+                            book more than{0} places per competition (places \
+                            previously booked: {1}).'.format(
+                                max_number_of_places, already_booked_places))
 
             if not error:
-                competition['numberOfPlaces'] = \
-                    int(competition['numberOfPlaces']) - placesRequired
+                competition['number_of_places'] = \
+                    int(competition['number_of_places']) - placesRequired
                 club['points'] = int(club['points']) - placesRequired
                 try:
                     club['competitions']
                 except KeyError:
                     club['competitions'] = {}
-                club['competitions'][competition['name']] = placesRequired + already_booked_places
+                club['competitions'][competition['name']] = \
+                    placesRequired + already_booked_places
                 flash('Great-booking complete!')
                 return redirect(url_for('show_summary'))
 
             for message in error:
                 flash(message)
 
-            return render_template('booking.html', club=club, competition=competition)
+        return render_template('booking.html', club=club,
+                               competition=competition)
+
     else:
         flash("Something went wrong-please try again")
         return redirect(url_for('show_summary'))

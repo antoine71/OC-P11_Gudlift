@@ -28,14 +28,14 @@ def test_purchase_places():
     competition_ = [competition_ for competition_ in competitions
                     if competition_['name'] == competition][0]
     current_points = int(club_['points'])
-    current_places = int(competition_['numberOfPlaces'])
+    current_places = int(competition_['number_of_places'])
 
     required_places = 13
     response = client.post(quote("/book/Spring Festival/Simply Lift"), data={
         'places': required_places})
     assert "Warning: too much places booked." in str(response.data)
     assert int(club_['points']) == current_points
-    assert int(competition_['numberOfPlaces']) == current_places
+    assert int(competition_['number_of_places']) == current_places
 
     required_places = 3
     response = client.post(quote("/book/" + competition + "/" + club), data={
@@ -44,14 +44,14 @@ def test_purchase_places():
     current_points -= required_places
     current_places -= required_places
     assert int(club_['points']) == current_points
-    assert int(competition_['numberOfPlaces']) == current_places
+    assert int(competition_['number_of_places']) == current_places
 
     required_places = 11
     response = client.post(quote("/book/" + competition + "/" + club), data={
         'places': required_places})
     assert 'Warning: not enough points.' in str(response.data)
     assert int(club_['points']) == current_points
-    assert int(competition_['numberOfPlaces']) == current_places
+    assert int(competition_['number_of_places']) == current_places
 
     required_places = 1
     response = client.post(quote("/book/" + competition + "/" + club), data={
@@ -60,7 +60,7 @@ def test_purchase_places():
     current_points -= required_places
     current_places -= required_places
     assert int(club_['points']) == current_points
-    assert int(competition_['numberOfPlaces']) == current_places
+    assert int(competition_['number_of_places']) == current_places
 
 
 def test_show_summary():
