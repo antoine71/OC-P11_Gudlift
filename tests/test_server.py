@@ -62,6 +62,13 @@ def test_purchase_places():
     assert int(club_['points']) == current_points
     assert int(competition_['number_of_places']) == current_places
 
+    required_places = -1
+    response = client.post(quote("/book/" + competition + "/" + club), data={
+        'places': required_places})
+    assert 'Please enter a number strictly positive' in str(response.data)
+    assert int(club_['points']) == current_points
+    assert int(competition_['number_of_places']) == current_places
+
 
 def test_show_summary():
     response = client.get(quote("/book/Spring Festival/Simply Lift"))

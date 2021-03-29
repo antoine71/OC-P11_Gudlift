@@ -1,8 +1,6 @@
 import pytest
 from urllib.parse import quote
 
-from flask import session
-
 from gudlift.server import app
 
 client = app.test_client()

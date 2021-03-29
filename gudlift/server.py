@@ -85,7 +85,10 @@ def book(competition, club):
             competition['date'] >= datetime.now():
 
         if request.method == 'POST':
-            placesRequired = int(request.form['places'])
+            if not request.form['places'].isnumeric():
+                placesRequired = 0
+            else:
+                placesRequired = int(request.form['places'])
             points = int(club['points'])
             max_number_of_places = 12
             try:
@@ -94,6 +97,9 @@ def book(competition, club):
             except KeyError:
                 already_booked_places = 0
             error = []
+
+            if placesRequired <= 0:
+                error.append('Please enter a number strictly positive')
 
             if placesRequired > points:
                 error.append('Warning: not enough points. You have only {0} \
