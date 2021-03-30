@@ -1,8 +1,10 @@
 bin
 include
 lib
+.DS_Store
 .coverage
 htmlcov/
 .Python
 .envrc
-__pycache__
+__pycache__/
+.pytest_cache/

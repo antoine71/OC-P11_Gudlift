@@ -1,0 +1,26 @@
+DROP TABLE IF EXISTS clubs;
+DROP TABLE IF EXISTS competitions;
+DROP TABLE IF EXISTS bookings;
+
+CREATE TABLE clubs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  points INTEGER NOT NULL
+);
+
+CREATE TABLE competitions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  date TIMESTAMP NOT NULL,
+  number_of_places INTEGER NOT NULL
+);
+
+CREATE TABLE bookings (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  club_id INTEGER NOT NULL,
+  competition_id INTEGER NOT NULL,
+  places_booked INTEGER NOT NULL,
+  FOREIGN KEY (club_id) REFERENCES clubs (id),
+  FOREIGN KEY (competition_id) REFERENCES competitions (id)
+);
