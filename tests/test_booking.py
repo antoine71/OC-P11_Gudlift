@@ -77,7 +77,7 @@ def test_book_places_errors(client, auth, path, places, expected_message):
     assert expected_message in response.data
 
 
-def test_book_places_past_competition(client, auth):
+def test_book_past_competition(client, auth):
     auth.login()
     response = client.get('/book/competition2/club1')
     assert response.status_code == 302
@@ -85,6 +85,14 @@ def test_book_places_past_competition(client, auth):
     response = client.post('/book/competition2/club1', data={'places': 1})
     assert response.status_code == 302
     assert response.headers['Location'] == 'http://localhost/show_summary'
+
+
+def test_book_not_authorized(client, auth):
+    auth.login()
+    response = client.get('/book/competition1/club2')
+    assert response.status_code == 403
+    response = client.post('/book/competition1/club2', data={'places': 1})
+    assert response.status_code == 403
 
 
 def test_points(client):

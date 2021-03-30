@@ -9,6 +9,7 @@ from flask import session
 from flask import url_for
 from flask import abort
 from flask import Blueprint
+from flask import g
 
 from gudlift.auth import login_required
 from gudlift.db import get_db
@@ -48,13 +49,15 @@ def book(competition, club):
     competitions = db.execute(
         'SELECT * FROM competitions'
     ).fetchall()
-    competition = unquote(competition)
-    club = unquote(club)
+    competition_name = unquote(competition)
+    club_name = unquote(club)
     try:
-        club = [c for c in clubs if c['name'] == club][0]
-        competition = [c for c in competitions if c['name'] == competition][0]
+        club = [c for c in clubs if c['name'] == club_name][0]
+        competition = [c for c in competitions if c['name'] == competition_name][0]
     except IndexError:
         abort(404)
+    if club['email'] != g.user:
+        abort(403)
     if club and competition and competition['date'] >= datetime.now():
         if request.method == 'POST':
             if not request.form['places'].isnumeric():
