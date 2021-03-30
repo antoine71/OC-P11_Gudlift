@@ -1,4 +1,3 @@
-import time
 from locust import HttpUser, task, between
 
 
@@ -19,9 +18,8 @@ class QuickstartUser(HttpUser):
         self.client.get("/book/Spring%2520Festival/Simply%2520Lift")
 
     @task
-    def book(self):
+    def points(self):
         self.client.get("/points")
 
     def on_start(self):
         self.client.post("/", data={"email": "john@simplylift.co"})
-    
