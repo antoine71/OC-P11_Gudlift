@@ -21,7 +21,7 @@ This project uses the following technologies:
 
 Python 3 is required to run the API.
 
-1. Clone this repository or download the code using [as a zip file](https://github.com/antoine71/gudlift./archive/main.zip))
+1. Clone this repository (or download the code using [as a zip file](https://github.com/antoine71/gudlift./archive/main.zip)):
 
 ```shell
 git clone https://github.com/antoine71/gudlift.git
@@ -45,13 +45,27 @@ pip install -r requirements.txt
 
 ```shell
 $ export FLASK_APP=gudlift
+```
+
+6. Initialise the database and populate it from the json files provided using the following commands:
+
+```shell
+$ flask init-db
+Initialized the database.
+$ flask populate-db
+Populated the database.
+```
+
+7. Run the server
+
+```shell
 $ flask run
 Running on http://127.0.0.1:5000/
 ```
 
 ## Usage
 
-The website can be from any web browser from the following address : http://localhost:5000/
+The website can be opened from any web browser from the following address : http://localhost:5000/
 
 ## Testing
 
