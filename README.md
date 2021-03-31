@@ -21,7 +21,7 @@ This project uses the following technologies:
 
 Python 3 is required to run the API.
 
-1. Clone this repository (or download the code using [as a zip file](https://github.com/antoine71/gudlift./archive/main.zip)):
+1. Clone this repository (or download the code [as a zip file](https://github.com/antoine71/gudlift./archive/main.zip)):
 
 ```shell
 git clone https://github.com/antoine71/gudlift.git
@@ -44,7 +44,7 @@ pip install -r requirements.txt
 5. Tell your terminal the application to work with by exporting the FLASK_APP environment variable and start the server:
 
 ```shell
-$ export FLASK_APP=gudlift
+export FLASK_APP=gudlift
 ```
 
 6. Initialise the database and populate it from the json files provided using the following commands:
