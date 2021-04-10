@@ -4,7 +4,7 @@ Openclassrooms - Parcours développement Python Projet 11
 
 ## Status
 
-This project is under development
+This project is ready for evaluation.
 
 ## Description
 
@@ -56,6 +56,8 @@ $ flask populate-db
 Populated the database.
 ```
 
+NB: for testing purpose a populated database is already provided in the repository in the folder `/instance`
+
 7. Run the server
 
 ```shell
@@ -88,6 +90,13 @@ coverage html
 
 The performance testing is done using Locust. The file `locustfiles/locustfile.py` contains a series of requests that can be sent to the flask server to test the performance of the application.
 
+The file implements the followint tests:
+
+* displays tourament list (request `GET /show_summary`)
+* displays booking page (request `GET /book/Spring%2520Festival/Simply%2520Lift`)
+* performs a booking (request `POST /book/Spring%2520Festival/Simply%2520Lift`)
+* display clubs list and updated points (request `GET /points`)
+
 To run locust, run the following command from the folder `locustfiles/` while the flask server is running:
 
 ```shell
@@ -95,6 +104,12 @@ locust
 ```
 
 You can then open the locust application in a web browser http://localhost:8089/ and start porformance tests.
+The recommended tests parameters are:
 
-![Coverage report](locust.jpg)
+* Number of total users to simulate: 12
+* Spawn rate: 1
+* Host: http://localhost:5000/
+
+![Coverage parameters](locust_parameters.jpg)
+![Coverage report](locust_report.jpg)
 
