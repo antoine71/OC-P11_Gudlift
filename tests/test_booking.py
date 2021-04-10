@@ -56,7 +56,7 @@ def test_book_places(client, auth, app):
         booking = db.execute('SELECT * FROM bookings WHERE club_id = ? AND '
                              'competition_id = ?',
                              (1, 1)).fetchone()
-        assert int(club['points']) == 7
+        assert int(club['points']) == 1
         assert int(competition['number_of_places']) == 8
         assert int(booking['places_booked']) == 3
 
@@ -64,7 +64,7 @@ def test_book_places(client, auth, app):
 @pytest.mark.parametrize(
     'path, places, expected_message',
     [
-        ('/book/competition1/club1', 11, b'Warning: not enough points.'),
+        ('/book/competition1/club1', 4, b'Warning: not enough points.'),
         ('/book/competition3/club1', 3, b'not enough places available'),
         ('/book/competition1/club1', -1, b'enter a number strictly positive.'),
         ('/book/competition4/club1', 6, b'too much places booked.'),

@@ -66,6 +66,7 @@ def book(competition, club):
                 places_required = int(request.form['places'])
             points = int(club['points'])
             max_number_of_places = 12
+            cost = 3 * places_required
             booking = db.execute(
                     'SELECT * FROM bookings WHERE club_id = ? '
                     'AND competition_id = ?',
@@ -84,7 +85,7 @@ def book(competition, club):
                 error.append('Warning: not enough places available for this '
                              'competition.')
 
-            if places_required > points:
+            if cost > points:
                 error.append('Warning: not enough points. You have only {0} '
                              'available points, you can not book more than '
                              '{0} places.'.format(points))
@@ -98,7 +99,7 @@ def book(competition, club):
             if not error:
                 remaining_number_of_places = \
                     int(competition['number_of_places']) - places_required
-                remaining_points = int(club['points']) - places_required
+                remaining_points = int(club['points']) - cost
                 places_booked = places_required + already_booked_places
 
                 db.execute(
