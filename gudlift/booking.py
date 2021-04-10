@@ -127,7 +127,8 @@ def book(competition, club):
                          places_booked)
                     )
                 db.commit()
-                flash('Great-booking complete!')
+                flash('Great-booking completed! '
+                      f'({places_required} place(s) for {competition_name})')
                 return redirect(url_for('booking.show_summary'))
 
             for message in error:

@@ -28,3 +28,25 @@ def test_logout(client, auth):
     with client:
         auth.logout()
         assert 'user_id' not in session
+
+
+def test_login_required_show_summary(client):
+    response = client.get('/show_summary')
+    assert response.status_code == 302
+    assert response.headers['Location'] == 'http://localhost/'
+
+
+@pytest.mark.parametrize('path', (
+    '/book/competition1/club1',
+    '/book/competition2/club1',
+))
+def test_login_required_book(client, path):
+    response = client.get(path)
+    assert response.headers['Location'] == 'http://localhost/'
+    response = client.post(path)
+    assert response.headers['Location'] == 'http://localhost/'
+
+
+def test_login_not_required_points(client):
+    response = client.get('/points')
+    assert response.status_code == 200
